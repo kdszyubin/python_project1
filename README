@@ -1,1 +1,31 @@
-python simple_markup.py < text_input.txt > text_output.html
+#python simple_markup.py < text_input.txt > text_output.html
+python markup.py < text_input.txt > text_output.html
+#学习sys.stdin re.sub
+#整个解析器框架：
+#1、解析器基类Parser
+#   包含初始化函数__init__
+#       规则添加函数addRule，rule用以对block进行判断类型
+#       过滤器添加函数addFilter，filter用以对block内的某些字符进行匹配替换
+#       解析函数parse，先文件分块，分块后对所有块应用所有filer函数
+#                   最后根据类型进行相应的action操作
+#2、初级的解析器类BasicTextParser，继承Parser
+#   只有__init__函数，添加所需的规则和过滤器
+
+#一个块有三种操作
+#   1、标签开始：如<p>
+#   2、标签结束：如</p>
+#   3、字符替换：如*xxx*替换为<em>xxx</em>
+#对此建立一个handler基类，
+#   包含start(self, name)，根据那么进行标签开始操作
+#       end(self, name)，根据name进行标签结束
+#       sub(self, name)，根据name寻找替换函数,
+#                        得到的替换函数如sub_url(self, match)，
+#                        为match完善url标志
+#HTMLRenderer继承handler，定义了了各种标签的start和end操作，及各种sub操作
+#供基类中的3个函数调用
+
+#parse对文件分块后，先对所有的块进行filter操作（封装后的sub），
+#然后使用rule对块判断类型，确定类型后需要进行操作
+#因此Rule类有两个函数：
+#   condition
+#   action(包含start、feed、end)
